@@ -1,0 +1,16 @@
+.App {
+	text-align: center;
+	display: flex;
+	width: 100vw;
+	height: 100vh;
+	background: beige;
+	align-items: center;
+}
+
+.bird {
+	background: rosybrown;
+	height: 50px;
+	width: 50px;
+	border-radius: 15px;
+	margin-left: 10vw;
+}
