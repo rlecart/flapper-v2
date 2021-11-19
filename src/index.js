@@ -3,9 +3,18 @@ import ReactDOM from 'react-dom';
 import './style/index.css';
 import App from './client/container/App';
 
-ReactDOM.render(
-  <React.StrictMode>
+import { Provider } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
+import gameReducer from './client/reducers/gameReducer';
+
+const Store = createStore(combineReducers({
+  gameReducer,
+}));
+
+const Root = () => (
+  <Provider store={Store}>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </Provider>
 );
+
+ReactDOM.render(<Root />, document.getElementById('root'));

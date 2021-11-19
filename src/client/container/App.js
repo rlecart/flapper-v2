@@ -1,13 +1,17 @@
-import React from 'react';
 import '../../style/App.css';
-import { GameContainer } from './GameContainer';
+import React from 'react';
+import { connect } from 'react-redux';
 
-const App = ({ }) => {
-  return (
-    <div className="App">
-      <GameContainer />
-    </div>
-  );
+import GameContainer from './GameContainer';
+
+const App = ({ gameReducer }) => (
+  <div className="App">
+    <GameContainer />
+  </div>
+);
+
+const mapStateToProps = (state) => {
+  return state;
 };
 
-export default App;
+export default connect(mapStateToProps)(App);

@@ -12,5 +12,30 @@
 	height: 50px;
 	width: 50px;
 	border-radius: 15px;
-	margin-left: 10vw;
+	margin-left: 50px;
+}
+
+.pipes {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	position: absolute;
+}
+
+.pipe {
+	min-width: 75px;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	position: absolute;
+}
+
+.pipeBorder {
+	background: aquamarine;
+}
+
+.pipeMiddle {
+	height: 200px;
 }
