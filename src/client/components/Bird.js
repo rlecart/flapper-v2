@@ -1,7 +1,10 @@
 import React from "react";
 
-const Bird = ({ pos }) => (
-  <div className="bird" style={{ marginBottom: `${pos}px` }}>
+const Bird = ({ pos, rotation }) => (
+  <div className="bird" style={{
+    marginTop: `${pos}px`,
+    transform: `rotate(${rotation}deg)`,
+    }}>
   </div>
 );
 

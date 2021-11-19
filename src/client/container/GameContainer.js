@@ -1,12 +1,16 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from "react-redux";
+import gameOptions from '../../ressources/gameOptions';
 
 import { refreshGameInfo, resetGameInfo } from '../actions/gameActions';
 
+import Score from '../components/Score';
 import Bird from '../components/Bird';
 import PipesContainer from './PipesContainer';
 
 class GameContainer extends Component {
+  _hasRelease = true;
+
   get gameReducer() {
     return (this.props.gameReducer);
   }
@@ -19,10 +23,22 @@ class GameContainer extends Component {
     });
   }
 
+  get hasRelease() {
+    return (this._hasRelease);
+  }
+
+  set hasRelease(value) {
+    this._hasRelease = value;
+  }
+
   resetGame() {
     clearInterval(this.gameReducer.jumpInterval);
     clearInterval(this.gameReducer.gameInterval);
     resetGameInfo(this.props.dispatch);
+    this.gameReducer = {
+      pos: window.innerHeight / 2 - this.gameReducer.add,
+      prevPos: window.innerHeight / 2 - this.gameReducer.add,
+    };
   };
 
   move() {
@@ -31,34 +47,40 @@ class GameContainer extends Component {
 
     if (stateTmp.up === true) {
       stateTmp.add /= 2;
+      stateTmp.rotation = ((stateTmp.initialAdd / stateTmp.initialAdd - stateTmp.add / stateTmp.initialAdd)
+        * (stateTmp.neutralRotation - stateTmp.maxUpRotation));
       if (stateTmp.add <= 2) {
         stateTmp.up = !stateTmp.up;
       }
     }
     else {
-      if (stateTmp.add * 2 < stateTmp.initialAdd * 3)
+      if (stateTmp.rotation < stateTmp.maxDownRotation) {
         stateTmp.add *= 2;
+        stateTmp.rotation = (stateTmp.add / stateTmp.initialAdd
+          * (stateTmp.maxDownRotation - stateTmp.maxUpRotation) + stateTmp.maxUpRotation);
+      }
       else
         stateTmp.add += stateTmp.initialAdd;
     }
     this.gameReducer = stateTmp;
-    const birdPos = -(this.gameReducer.pos + this.gameReducer.add);
-    if (birdPos <= -window.innerHeight + 50)
+    const birdPos = (this.gameReducer.pos + this.gameReducer.add);
+    console.log(birdPos);
+    if (birdPos >= window.innerHeight - 50)
       this.gameOver('down');
-    else if (birdPos >= window.innerHeight - 50)
+    else if (birdPos < 0)
       this.gameOver('up');
     else if (!this.gameReducer.isPending && this.gameReducer.coordinates) {
-      console.log('birdPos = ', birdPos, -birdPos + window.innerHeight / 2 - 25);
+      // console.log('birdPos = ', birdPos, birdPos + window.innerHeight / 2 - 25);
       this.gameReducer.coordinates.forEach(e => {
-        if (e.x <= 100 && e.x >= 50 - 75 &&
-          (e.y > -birdPos + window.innerHeight / 2 - 25 || e.y + 200 < -birdPos + window.innerHeight / 2 + 25)) {
-            console.log('\n');
-            console.log('ca va gameover la', this.gameReducer);
-            console.log('\n');
-            this.gameOver('pipe');
-          }
-        });
-      }
+        if (e.x <= 100 && e.x >= 50 - gameOptions.pipesWidth &&
+          (birdPos < e.y || birdPos + 50 > e.y + gameOptions.spaceBetweenPipes))
+          this.gameOver('pipe');
+        else if (e.x - gameOptions.pipesWidth / 2 < 75 && !this.gameReducer.scoreAlreadyAdded) {
+          this.gameReducer.score++;
+          this.gameReducer.scoreAlreadyAdded = true;
+        }
+      });
+    }
   };
 
   gameOver(where) {
@@ -81,7 +103,7 @@ class GameContainer extends Component {
   }
 
   jump() {
-    // console.log('[jump] nique', this.gameReducer);
+    console.log('[jump] nique', this.gameReducer);
     if (this.gameReducer.isInJump) {
       clearInterval(this.gameReducer.jumpInterval);
       // console.log('avant');
@@ -106,7 +128,8 @@ class GameContainer extends Component {
   };
 
   eventDispatcher(event) {
-    if (event.key === ' ') {
+    if (event.key === ' ' && this.hasRelease) {
+      this.hasRelease = false;
       if (!this.gameReducer.inGame) {
         if (this.gameReducer.pos !== 0)
           this.resetGame();
@@ -120,11 +143,18 @@ class GameContainer extends Component {
   };
 
   componentDidMount() {
-    window.addEventListener('keypress', this.eventDispatcher.bind(this));
+    this.gameReducer = {
+      pos: window.innerHeight / 2 - this.gameReducer.add,
+      prevPos: window.innerHeight / 2 - this.gameReducer.add,
+    };
+    window.addEventListener('keydown', this.eventDispatcher.bind(this));
+    window.addEventListener('keyup', () => this.hasRelease = true);
+    // window.addEventListener('keydown', this.eventDispatcher.bind(this));
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keypress', this.eventDispatcher.bind(this));
+    window.removeEventListener('keydown', this.eventDispatcher.bind(this));
+    window.addEventListener('keyup', () => this.hasRelease = true);
   }
   //   if(inGame) {
   //     gameInterval = setInterval(() => {
@@ -142,10 +172,14 @@ class GameContainer extends Component {
     // console.log('[render]', this.props);
     return (
       <Fragment>
-        <Bird pos={-(this.gameReducer.pos + this.gameReducer.add)} />
+        <Score score={this.gameReducer.score} />
+        <Bird
+          pos={(this.gameReducer.pos + this.gameReducer.add)}
+          rotation={this.gameReducer.rotation}
+        />
         <PipesContainer
           inGame={this.gameReducer.inGame}
-          birdPos={-(this.gameReducer.pos + this.gameReducer.add)}
+          birdPos={(this.gameReducer.pos + this.gameReducer.add)}
           gameOver={(where) => this.gameOver(where)}
         />
       </Fragment>

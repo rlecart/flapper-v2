@@ -1,3 +1,5 @@
+import gameOptions from "./gameOptions";
+
 const initialGameValues = {
   inGame: false,
   isPending: false,
@@ -6,14 +8,22 @@ const initialGameValues = {
   gameInterval: undefined,
 
   pos: 0,
-  add: 200,
-  initialAdd: 200,
+  add: gameOptions.birdJump,
+  initialAdd: gameOptions.birdJump,
   prevPos: 0,
   up: true,
   isInJump: false,
-  distance: 0,
+  score: 0,
+
+  maxUpRotation: 45,
+  neutralRotation: 90,
+  maxDownRotation: 160,
+  rotation: 0,
 
   coordinates: [],
+  scoreAlreadyAdded: false,
+
+  hasRelease: true,
 };
 
 export default initialGameValues;

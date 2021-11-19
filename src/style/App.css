@@ -4,7 +4,6 @@
 	width: 100vw;
 	height: 100vh;
 	background: beige;
-	align-items: center;
 }
 
 .bird {
@@ -13,6 +12,7 @@
 	width: 50px;
 	border-radius: 15px;
 	margin-left: 50px;
+	z-index: 2;
 }
 
 .pipes {
@@ -22,6 +22,7 @@
 	flex-direction: row;
 	flex-wrap: nowrap;
 	position: absolute;
+	z-index: 1;
 }
 
 .pipe {
@@ -33,9 +34,32 @@
 }
 
 .pipeBorder {
-	background: aquamarine;
+	background: darkseagreen;
 }
 
 .pipeMiddle {
 	height: 200px;
+}
+
+.score {
+	position: absolute;
+	width: 100vw;
+	height: 150px;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+	z-index: 3;
+	font-family: sans-serif;
+}
+
+.yourScore {
+	color: rosybrown;
+	font-weight: 100;
+}
+
+.scoreNumber {
+	font-size: xxx-large;
+	color: rosybrown;
+	font-weight: 600;
 }

@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from "react";
 import { connect } from "react-redux";
+import gameOptions from "../../ressources/gameOptions";
 import { refreshGameInfo } from "../actions/gameActions";
 
 import Pipe from "../components/Pipe";
@@ -18,10 +19,10 @@ class PipesContainer extends Component {
 
   letRandomChoose(y) {
     const ret = Math.floor(Math.random() * 2);
-    const add = Math.floor(Math.random() * 350);
+    const add = Math.floor(Math.random() * gameOptions.pipesVariance);
 
     if (ret === 0) {
-      if (y + add < window.innerHeight - 200)
+      if (y + add < window.innerHeight - gameOptions.spaceBetweenPipes)
         return (add);
       else
         return (-add);
@@ -35,10 +36,9 @@ class PipesContainer extends Component {
   }
 
   createNewPipe() {
-    // console.log('state = ', this.gameReducer);
     let stateTmp = this.gameReducer;
     let coordinate = {
-      y: window.innerHeight / 2 - 100,
+      y: (window.innerHeight / 2) - (gameOptions.spaceBetweenPipes / 2),
       x: window.innerWidth,
     };
     if (stateTmp.coordinates.length !== 0) {
@@ -55,11 +55,13 @@ class PipesContainer extends Component {
 
     for (let i in this.gameReducer.coordinates) {
       this.gameReducer.coordinates[i].x -= 5;
-      if (-(this.gameReducer.coordinates[lastElem].x - window.innerWidth) >= 300)
+      if (-(this.gameReducer.coordinates[lastElem].x - window.innerWidth) >= gameOptions.distanceBetweenPipes)
         this.createNewPipe();
     }
-    if (this.gameReducer.coordinates.length && this.gameReducer.coordinates[0].x + 75 <= 0)
+    if (this.gameReducer.coordinates.length && this.gameReducer.coordinates[0].x + gameOptions.pipesWidth <= 0) {
       this.gameReducer.coordinates.shift();
+      this.gameReducer.scoreAlreadyAdded = false;
+    }
 
   }
 
